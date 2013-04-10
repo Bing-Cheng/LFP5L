@@ -1,0 +1,137 @@
+close all;
+clear;
+disFreq = 50;
+disTime = 551;
+disMatrix = zeros(disFreq,disTime);
+ratNames = {'A09','O10','Q10','T10','G11'};
+ratNumber = length(ratNames);
+BT = zeros(ratNumber,2);
+BS = zeros(ratNumber,2);
+dBT = zeros(ratNumber,2);
+dBS = zeros(ratNumber,2);
+AC = zeros(ratNumber,2);
+for i = 1 : ratNumber
+    ratName = ratNames{i};
+    rat = [ratName(1) '5L'];
+    idir = ['G:\LFPelements\' ratName '\colorMap\'];
+    odir = ['G:\LFP5LOutput\' ratName '\colorMap\'];
+    load([idir rat 'fft']);%, 'fftR1Dm', 'fftW1Dm');
+%             h = figure('position', [0   100   560   420]); 
+%             disMatrix([1:2:disFreq],:) = fftR1Dm(1:disFreq/2,:);
+%             disMatrix([2:2:disFreq],:) = fftR1Dm(1:disFreq/2,:);
+%             imagesc(disMatrix);
+%             colorbar;
+%             titleName = [rat '-R-' int2str(disFreq)];
+%            % title(titleName);
+%             saveas(h,[odir titleName],'jpg');
+% 
+%             
+%             h = figure('position', [700   100   560   420]); 
+%             disMatrix([1:2:disFreq],:) = fftW1Dm(1:disFreq/2,:);
+%             disMatrix([2:2:disFreq],:) = fftW1Dm(1:disFreq/2,:);
+%             imagesc(disMatrix);
+%             colorbar;
+%             titleName = [rat  '-W-' int2str(disFreq)];
+%            % title(titleName);
+%             saveas(h,[odir titleName],'jpg');
+%             
+            thetaBand = [2:4];%4~8Hz
+            thetaR1 = mean(fftR1Dm(thetaBand,:)); 
+            thetaW1 = mean(fftW1Dm(thetaBand,:)); 
+        h = figure; hold on;
+        XX = [1 : length(thetaR1)];%-200;
+        plot(XX, thetaR1,'r','LineWidth',2);
+        plot(XX, thetaW1,'g','LineWidth',2);
+
+        legend('CR','FL');
+        titleN = ['Theta Power  ' ratName];
+        title(titleN);
+        saveas(h,[odir titleN],'jpg');
+        BT(i,1) = mean(thetaR1(150:200));
+        BT(i,2) = mean(thetaW1(150:200));
+        BS(i,1) = mean(thetaR1(1:100));
+        BS(i,2) = mean(thetaW1(1:100));
+        AC(i,1) = mean(thetaR1(200:400));
+        AC(i,2) = mean(thetaW1(200:400));
+        dBT(i,1) = mean(diff(thetaR1(150:200)));
+        dBT(i,2) = mean(diff(thetaW1(150:200)));
+        dBS(i,1) = mean(diff(thetaR1));
+        dBS(i,2) = mean(diff(thetaW1));
+end
+
+Z = zeros(ratNumber*2,2);
+Z(2:2:ratNumber*2,:) = BS;
+Z(1:2:ratNumber*2-1,:) = BT;
+%Z= Z2';
+%ZW=Z;
+  h = figure;
+
+[r,c] = size(Z);            %# Size of Z 
+Y = [1 2 5 6 9 10 13 14 17 18];  %# The positions of bars along the y axis 
+C = mat2cell(kron(Z,ones(6,4)),6*r,4.*ones(1,c)).';  %'# Color data for Z 
+ 
+hBar = bar3(Y,Z);           %# Create the bar graph 
+set(hBar,{'CData'},C);      %# Add the color data 
+set(gca,'YTickLabel',{'BT' 'BS'},'FontSize',8);  %# Modify the y axis tick labels 
+set(gca,'XTickLabel',{'CR' 'FL'});  %# Modify the y axis tick labels x1:learned; x2:learning
+set(gcf, 'Renderer', 'ZBuffer')
+
+
+view(-70,30);               %# Change the camera view 
+%colorbar;                   %# Add the color bar 
+ax=gca;
+pos=get(gca,'pos');
+set(gca,'pos',[pos(1) pos(2) pos(3) pos(4)*0.95]);
+pos=get(gca,'pos');
+hc=colorbar('location','eastoutside','position',[pos(1)+pos(3)+0.03 pos(2) 0.03 pos(4)]);
+
+    titleName = ['Theta power before trial start'];
+ %   title(titleName,'FontSize',16);
+    saveas(h, ['G:\LFP5LOutput\' titleName],'jpg');
+    
+Z(2:2:ratNumber*2,:) = dBS;
+Z(1:2:ratNumber*2-1,:) = dBT;
+h = figure;
+[r,c] = size(Z);            %# Size of Z 
+Y = [1 2 5 6 9 10 13 14 17 18];  %# The positions of bars along the y axis 
+C = mat2cell(kron(Z,ones(6,4)),6*r,4.*ones(1,c)).';  %'# Color data for Z 
+hBar = bar3(Y,Z);           %# Create the bar graph 
+set(hBar,{'CData'},C);      %# Add the color data 
+set(gca,'YTickLabel',{'BT' 'BS'},'FontSize',8);  %# Modify the y axis tick labels 
+set(gca,'XTickLabel',{'CR' 'FL'});  %# Modify the y axis tick labels x1:learned; x2:learning
+set(gcf, 'Renderer', 'ZBuffer')
+view(-70,30);               %# Change the camera view 
+%colorbar;                   %# Add the color bar 
+ax=gca;
+pos=get(gca,'pos');
+set(gca,'pos',[pos(1) pos(2) pos(3) pos(4)*0.95]);
+pos=get(gca,'pos');
+hc=colorbar('location','eastoutside','position',[pos(1)+pos(3)+0.03 pos(2) 0.03 pos(4)]);
+    titleName = ['The first derivative of the theta power'];
+ %   title(titleName,'FontSize',16);
+   saveas(h, ['G:\LFP5LOutput\' titleName],'jpg');
+    
+    
+h = figure;
+hBar = bar(AC);           %# Create the bar graph 
+legend('CR','FL');
+    titleName = ['Theta power after trial start'];
+ %   title(titleName,'FontSize',16);
+    saveas(h, ['G:\LFP5LOutput\' titleName],'jpg');
+    
+    h = figure;
+hBar = bar([mean(BT,2),mean(BS,2)]);           %# Create the bar graph 
+legend('BT','BS');
+    titleName = ['BT to BS'];
+ %   title(titleName,'FontSize',16);
+    saveas(h, ['G:\LFP5LOutput\' titleName],'jpg');
+    
+    
+    [hr,pBT,ci,stats] = ttest(mean(BT,2),mean(BS,2))
+    [hr,pr,ci,stats] = ttest(BT(:,1),BS(:,1))
+    [hw,pw,ci,stats] = ttest(BT(:,2),BS(:,2))
+    [hw,prw,ci,stats] = ttest(BT(:,1),BT(:,2))
+    [hrd,prd,ci,stats] = ttest(dBT(:,1),dBS(:,1))
+    [hwd,pwd,ci,stats] = ttest(dBT(:,2),dBS(:,2))
+    [hac,pac,ci,stats] = ttest(AC(:,1),AC(:,2))
+  

@@ -1,0 +1,19 @@
+clear; 
+close all; 
+clc;
+
+rat = 'O12';
+
+edir = ['E:\' rat '\' rat '_5L\'];
+eList = dir(eDir);
+eLoc = 14;
+blockName = {};
+for i = 3 : length(eList)
+eName = eList(i).name;
+ePostFix = eName(eLoc);
+if ePostFix == 'A'
+    newName = [eName(1:eLoc-1) 'A' eName(eLoc+1:end)]
+    movefile(eName, newName);
+end
+end
+

@@ -1,0 +1,95 @@
+close all;
+clear;
+disFreq = 50;
+disTime = 551;
+disMatrix = zeros(disFreq,disTime);
+ratNames = {'A09','O10','Q10','T10','G11', 'K11', 'O12', 'R12','S12', 'T12'};
+%ratNames = {'T12'};
+ratNumber = length(ratNames);
+minTrials = 6;
+wBS = [1:100];
+wBT = [150:200];
+wAC = [201:400];
+thetaBand = [2:4];%4~8Hz
+respondACrCor = zeros(16,2000);
+
+respondACrRei = zeros(16,2000);
+
+nUnit = 0;
+for i = 1 : ratNumber
+    ratname = ratNames{i};
+    rat = [ratname(1) '5L'];
+    load(['G:\preparedDataLFP\', ratname, '_blockname']);
+    nDate = length(blockname);
+    for d = 1 : nDate
+        date = blockname{d};
+        date([4, 13, 14]) = []
+        for ch = 1 : 16
+            load(['G:\preparedDataLFP\', ratname, '\fftMatrix', date, '-ch',int2str(ch)]);
+            nTrialRC = size(fftMatrixSumRCorrection,3);
+            nTrialRR = size(fftMatrixSumRReinforcement,3);
+            nTrialWC = size(fftMatrixSumWCorrection,3);
+            nTrialWR = size(fftMatrixSumWReinforcement,3);
+            if (((nTrialRC+nTrialRR)>minTrials)&&((nTrialWC+nTrialWR)>minTrials)&&(nTrialRC>0)&&(nTrialRR>0)&&(nTrialWC>0)&&(nTrialWR>0))
+                nUnit = nUnit +1;
+                thetaRC = squeeze(mean(fftMatrixSumRCorrection(thetaBand,:,:)));
+                thetaRR = squeeze(mean(fftMatrixSumRReinforcement(thetaBand,:,:)));
+                thetaWC = squeeze(mean(fftMatrixSumWCorrection(thetaBand,:,:)));
+                thetaWR = squeeze(mean(fftMatrixSumWReinforcement(thetaBand,:,:)));
+ 
+                ACRC = mean(thetaRC(wAC,:));
+                ACRR = mean(thetaRR(wAC,:));
+                ACWC = mean(thetaWC(wAC,:));
+                ACWR = mean(thetaWR(wAC,:));
+          %      tACr = [ACRC,ACRR];
+                tACw = [ACWC,ACWR];
+
+   
+                 group = {[ones(1,nTrialRC), 2*ones(1,(nTrialWC+nTrialWR))]};
+                p2 = anovan([ACRC,tACw],group,'display','off');
+                if (p2<0.05)
+                    if (mean(ACRC)>mean(tACw))
+                    respondACrCor(ch,nUnit) = 1;
+                    else
+                        respondACrCor(ch,nUnit) = -1;
+                    end
+                else
+                    respondACrCor(ch,nUnit) = 0;
+                end
+                group = {[ones(1,nTrialRR), 2*ones(1,(nTrialWC+nTrialWR))]};
+                p2 = anovan([ACRR,tACw],group,'display','off');
+                if (p2<0.05)
+                    if (mean(ACRR)>mean(tACw))
+                    respondACrRei(ch,nUnit) = 1;
+                    else
+                        respondACrRei(ch,nUnit) = -1;
+                    end
+                else
+                    respondACrRei(ch,nUnit) = 0;
+                end
+                
+            else
+                [date ch nTrialRC nTrialRR nTrialWC nTrialWR]
+            end
+            ch
+        end%ch
+    end%date
+end%rat
+save('G:\preparedDataLFP\allUniteAllRatsChCorRei.mat', 'respondACrCor','respondACrRei');
+respond = respondACrCor;
+respond(find(respond==-1))=0;
+res3p = sum(respond,2);
+respond = respondACrCor;
+respond(find(respond==1))=0;
+res3n = sum(respond,2);
+[res3p, res3n]
+
+respond = respondACrRei;
+respond(find(respond==-1))=0;
+res3p = sum(respond,2);
+respond = respondACrRei;
+respond(find(respond==1))=0;
+res3n = sum(respond,2);
+[res3p, res3n]
+
+

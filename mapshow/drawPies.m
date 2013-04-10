@@ -1,0 +1,46 @@
+function re = drawPies(data, color, figName)
+Y = data;
+B = color;
+hFig = figure;%('Position',[0   100   260   420]);
+newP=zeros(16,4);
+oldP=zeros(16,4);
+Yt = sum(Y,2);
+Ytmax= max(Yt);
+Y(find(Y==0)) = 0.000001;
+for i=1:16
+        if (i<9)
+    j = mod(i-1,8)*2+1;
+    else
+        j = 17 - (mod(i-1,8)*2+1);
+        end
+    [i j]
+    subplot(8, 2, j);
+    x= Y(i,:);
+    h = pie(x,{' ',' '});
+    pieH1(i) = h(1);
+    pieH3(i) = h(3);
+    pieAxis(j) = get(h(1), 'Parent'); 
+    pieAxisPosition = get(pieAxis(j), 'Position');
+    oldP(j,:) =pieAxisPosition;
+    newRadius =Yt(i)/Ytmax;%i/32+0.5; % Change the radius of the pie chart
+    if (mod(j,2)==0)
+        pieAxisPosition(1)=0.50;%0.22*3;
+    end
+    newPieAxisPosition = (pieAxisPosition + [pieAxisPosition(3)*(1-newRadius)/2 pieAxisPosition(4)*(1-newRadius)/2 0 0]) .* [1 1 newRadius newRadius];
+    newP(j,:) = newPieAxisPosition;
+end
+for  i=2:8
+   set(pieAxis(i), 'Position', newP(i,:)); % Set pieAxis to new position 
+   set(pieH3(i),'FaceColor',B(3,:));
+   set(pieH1(i),'FaceColor',B(1,:));
+end
+for  i=[1 9:16]
+   set(pieAxis(i), 'Position', newP(i,:)); % Set pieAxis to new position 
+   set(pieH3(i),'FaceColor',B(4,:));
+   set(pieH1(i),'FaceColor',B(2,:));
+end
+paperUnit = get(gcf,'PaperUnits');
+paperSize = get(gcf,'PaperPosition');
+set(hFig,'PaperPosition',[0.25   2.5   2   6]);
+saveas(hFig, figName);
+re = 1;

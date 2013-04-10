@@ -1,0 +1,105 @@
+Short: A(others), G, I, K, L, O, Q(12/03), R(others), T
+Float: A(08/06~09/10), B, C, D, Q(others), R(12/14), U, W
+
+I5L, L5L, A5L : only for reading from tank ( data and event)
+
+'T5L-12-16-10-A' : wrong, removed
+
+'I5L-05-12-10-B' : event is NA, remove this day's data;
+
+'L5L-06-22-10-A' : event is NA, remove this day's data;
+
+those has shorter trial than they should
+'W5L-02-03-11-A' : right trial [1:4]; wrong trial [1:9];
+'G5L-09-19-11-A' : right trials [1:13]; wrong trial [1:7];
+I5L-05-14-10-B  : right trial 43 ; wrong trials 107; all wrong trials are zeros. removed
+'I5L-06-08-10-A' : right trial 60 ; wrong trials 43; all wrong and right trials are zeros. removed
+R5L-12-16-10-A
+Q5L-12-16-10-A
+
+A5L-09-04-09-B  (removed)
+???  Index of element to remove exceeds matrix dimensions.
+Error in ==> sectioning_6s_LFP_A09 at 111
+        trsW(trsR) = [];
+
+
+'S5L-12-16-10-A' : data read from tank is wrong, remove this day.
+
+Q5L-01-10-11-B
+??? Index exceeds matrix dimensions.
+Error in ==> sectioning_6s_LFP_Q10 at 121
+            wave1=data(floor(fs*(RePr(i,1)-2)) :
+            floor(fs*(RePr(i,1)+4)));
+solution :     trsW(end) = [];
+
+
+H:\preparedDataLFP\A09\fftMatrixA5L08-27-09-ch16
+rTrialN =     2
+wTrialN =     1
+Warning: Plot empty. 
+> In legend at 294
+  In LFP2_show3 at 70
+??? Index exceeds matrix dimensions.
+Error in ==> LFP2_show3 at 73
+    gR1AC = mean(gammaR1ChAvg(201:400));
+solution :  removed in show3 ???
+
+
+H:\preparedDataLFP\Q10\fftMatrixQ5L12-16-10-ch16    removed
+rTrialN =     1
+wTrialN =   192
+Warning: Plot empty. 
+> In legend at 294
+  In LFP2_show3 at 67
+??? Index exceeds matrix dimensions.
+Error in ==> LFP2_show3 at 70
+    gR1AC = mean(gammaR1ChAvg(201:400));
+
+
+'U5L-04-06-11-A' has only 5 right trials and 3 wrong trials
+'U5L-04-18-11-A', : 60Hz noise and one big peak during [1:10000] samples
+ 'U5L-04-08-11-A' 'U5L-04-12-11-A'   'U5L-04-22-11-A','U5L-04-25-11-A','U5L-04-28-11-A'}; : are zeros. removed
+
+
+==============================================================================
+K G O Q S 
+
+D11 bad
+
+
+trial wave:
+K5L-07-27-10-ch2Correct-142-16-8 : one trial wrong for all channels
+K5L-07-21-10 : wrong
+
+'Q5L-12-03-10-A' ch 1 3 16 bad
+Q5L-01-13-11 too small removed
+Q5L-12-13-10 too big removed
+Q5L-01-24-11 some trials are too small, the others are too big removed
+Q5L-01-06-11  Q5L-01-21-11
+
+C5L-06-08-11 some trials are too small, the others are too big removed
+C5L-06-01-11 some trials are too big removed
+C5L-06-17-11 some trials are too big removed
+C5L-06-20-11 some trials are too big removed
+C5L-06-21-11 some trials are too small removed
+
+
+
+
+theta bad ,exam trial wave ?
+{'O5L-10-04-10-A','O5L-10-11-10-A'};
+
+R12-13, 12-14(Float), 10-25 colormap bad
+U04-18 colormap bad
+
+trial wave:
+A5L-09-28-09; 11-05 ; 10-22-ch10 wrong
+float:'A5L-08-06-09-A','A5L-08-27-09-A','A5L-08-28-09-A','A5L-08-31-09-A','A5L-09-01-09-A','A5L-09-08-09-A','A5L-09-09-09-A','A5L-09-10-09-A',
+
+magnitude variance of 16 channels decrease;
+phase varicance of 16 channel decrease;
+imply getting more influence from a theta oscillation source (hippocampus). M1 or M2?
+
+if phase varicance of 16 channel decrease, phase locking is due to coordinate within the network;
+if phase varicance of 16 channel increase, phase locking is due to common source but different delay;
+
